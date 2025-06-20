@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Financeiro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .saldo-card {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .receitas-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .despesas-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .valor {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .form-section {
+            padding: 30px;
+            background: white;
+        }
+
+        .form-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .transacoes-section {
+            padding: 30px;
+            background: white;
+        }
+
+        .transacao-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .transacao-item:hover {
+            transform: translateX(5px);
+        }
+
+        .transacao-info {
+            flex: 1;
+        }
+
+        .transacao-descricao {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .transacao-detalhes {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .transacao-valor {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .receita {
+            color: #28a745;
+        }
+
+        .despesa {
+            color: #dc3545;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .transacao-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Sistema Financeiro</h1>
+            <p>Controle suas finanças de forma simples e eficiente</p>
+        </div>
+
+        <div class="dashboard">
+            <div class="card saldo-card">
+                <h3>💳 Saldo Atual</h3>
+                <div class="valor" id="saldo">R$ 0,00</div>
+                <p>Seu saldo total</p>
+            </div>
+            <div class="card receitas-card">
+                <h3>📈 Receitas</h3>
+                <div class="valor" id="receitas">R$ 0,00</div>
+                <p>Total de entradas</p>
+            </div>
+            <div class="card despesas-card">
+                <h3>📉 Despesas</h3>
+                <div class="valor" id="despesas">R$ 0,00</div>
+                <p>Total de saídas</p>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2 style="margin-bottom: 25px; color: #333;">➕ Adicionar Transação</h2>
+            <div class="form-container">
+                <div class="form-card">
+                    <h3 style="color: #28a745; margin-bottom: 20px;">💰 Nova Receita</h3>
+                    <form id="form-receita">
+                        <div class="form-group">
+                            <label for="descricao-receita">Descrição</label>
+                            <input type="text" id="descricao-receita" placeholder="Ex: Salário, Freelance..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="valor-receita">Valor (R$)</label>
+                            <input type="number" id="valor-receita" step="0.01" min="0.01" placeholder="0,00" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoria-receita">Categoria</label>
+                            <input type="text" id="categoria-receita" placeholder="Ex: Trabalho, Investimentos..." required>
+                        </div>
+                        <button type="submit" class="btn">Adicionar Receita</button>
+                    </form>
+                </div>
+
+                <div class="form-card">
+                    <h3 style="color: #dc3545; margin-bottom: 20px;">💸 Nova Despesa</h3>
+                    <form id="form-despesa">
+                        <div class="form-group">
+                            <label for="descricao-despesa">Descrição</label>
+                            <input type="text" id="descricao-despesa" placeholder="Ex: Supermercado, Combustível..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="valor-despesa">Valor (R$)</label>
+                            <input type="number" id="valor-despesa" step="0.01" min="0.01" placeholder="0,00" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="categoria-despesa">Categoria</label>
+                            <input type="text" id="categoria-despesa" placeholder="Ex: Alimentação, Transporte..." required>
+                        </div>
+                        <button type="submit" class="btn">Adicionar Despesa</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="transacoes-section">
+            <h2 style="margin-bottom: 25px; color: #333;">📋 Histórico de Transações</h2>
+            <div id="transacoes-lista">
+                <div class="loading">Carregando transações...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        // Função para formatar valor em reais
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
+        }
+
+        // Função para formatar data
+        function formatarData(dataISO) {
+            const data = new Date(dataISO);
+            return data.toLocaleDateString('pt-BR') + ' às ' + data.toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Carregar saldo
+        async function carregarSaldo() {
+            try {
+                const response = await fetch(`${API_BASE}/saldo`);
+                const dados = await response.json();
+                
+                document.getElementById('saldo').textContent = formatarMoeda(dados.saldo);
+                document.getElementById('receitas').textContent = formatarMoeda(dados.receitas);
+                document.getElementById('despesas').textContent = formatarMoeda(dados.despesas);
+            } catch (error) {
+                console.error('Erro ao carregar saldo:', error);
+            }
+        }
+
+        // Carregar transações
+        async function carregarTransacoes() {
+            try {
+                const response = await fetch(`${API_BASE}/transacoes`);
+                const transacoes = await response.json();
+                
+                const lista = document.getElementById('transacoes-lista');
+                
+                if (transacoes.length === 0) {
+                    lista.innerHTML = `
+                        <div class="empty-state">
+                            <h3>Nenhuma transação encontrada</h3>
+                            <p>Adicione sua primeira transação usando os formulários acima.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                lista.innerHTML = transacoes.map(transacao => `
+                    <div class="transacao-item">
+                        <div class="transacao-info">
+                            <div class="transacao-descricao">${transacao.descricao}</div>
+                            <div class="transacao-detalhes">
+                                ${transacao.categoria} • ${formatarData(transacao.data)}
+                            </div>
+                        </div>
+                        <div class="transacao-valor ${transacao.tipo}">
+                            ${transacao.tipo === 'receita' ? '+' : '-'} ${formatarMoeda(transacao.valor)}
+                        </div>
+                        <button class="btn btn-danger" onclick="deletarTransacao(${transacao.id})" style="width: auto; padding: 8px 15px;">
+                            🗑️
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Erro ao carregar transações:', error);
+                document.getElementById('transacoes-lista').innerHTML = `
+                    <div class="empty-state">
+                        <h3>Erro ao carregar transações</h3>
+                        <p>Tente recarregar a página.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Adicionar transação
+        async function adicionarTransacao(dados) {
+            try {
+                const response = await fetch(`${API_BASE}/transacoes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dados)
+                });
+                
+                if (response.ok) {
+                    await carregarSaldo();
+                    await carregarTransacoes();
+                    return true;
+                } else {
+                    const erro = await response.json();
+                    alert('Erro: ' + erro.erro);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Erro ao adicionar transação:', error);
+                alert('Erro ao adicionar transação. Tente novamente.');
+                return false;
+            }
+        }
+
+        // Deletar transação
+        async function deletarTransacao(id) {
+            if (!confirm('Tem certeza que deseja deletar esta transação?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/transacoes/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    await carregarSaldo();
+                    await carregarTransacoes();
+                } else {
+                    alert('Erro ao deletar transação.');
+                }
+            } catch (error) {
+                console.error('Erro ao deletar transação:', error);
+                alert('Erro ao deletar transação. Tente novamente.');
+            }
+        }
+
+        // Event listeners para os formulários
+        document.getElementById('form-receita').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const dados = {
+                descricao: document.getElementById('descricao-receita').value,
+                valor: parseFloat(document.getElementById('valor-receita').value),
+                tipo: 'receita',
+                categoria: document.getElementById('categoria-receita').value
+            };
+            
+            if (await adicionarTransacao(dados)) {
+                e.target.reset();
+            }
+        });
+
+        document.getElementById('form-despesa').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const dados = {
+                descricao: document.getElementById('descricao-despesa').value,
+                valor: parseFloat(document.getElementById('valor-despesa').value),
+                tipo: 'despesa',
+                categoria: document.getElementById('categoria-despesa').value
+            };
+            
+            if (await adicionarTransacao(dados)) {
+                e.target.reset();
+            }
+        });
+
+        // Carregar dados iniciais
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarSaldo();
+            carregarTransacoes();
+        });
+    </script>
+</body>
+</html>
+
